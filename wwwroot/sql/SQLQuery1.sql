@@ -1,0 +1,2 @@
+CREATE TABLE Integrantes (nombreUsuario VARCHAR(50) PRIMARY KEY, password VARCHAR(50) NOT NULL, DNI VARCHAR(20) NOT NULL, telefono VARCHAR(20), fechaNacimiento DATE, hobby VARCHAR(50), cantanteFav VARCHAR(50) ) 
+INSERT INTO Integrantes (nombreUsuario, password, DNI, telefono, fechaNacimiento, hobby, cantanteFav) VALUES ('ceciabreu', 'ceci123', '12345678', '1123456789', '2009-04-16', 'Pintar', 'TINI'), ('clarawolman', 'clara123', '23456789', '11234567890', '2009-05-13', 'Cnantar', 'Taylor Swift')

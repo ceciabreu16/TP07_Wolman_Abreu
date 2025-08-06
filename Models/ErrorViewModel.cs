@@ -1,4 +1,4 @@
-namespace TP07_Wolman_Abreu.Models;
+namespace TPNoNum_Wolman_Abreu.Models;
 
 public class ErrorViewModel
 {

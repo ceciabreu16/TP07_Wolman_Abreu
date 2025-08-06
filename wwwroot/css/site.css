@@ -1,23 +1,96 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+
 html {
   font-size: 14px;
   min-height: 100%;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
 
 body {
-  margin: 10px;
+  font-family: Georgia, "Times New Roman", serif;
+  background-color: #2c2c2c;
+  color: #f8f4e3;
+  padding: 20px;
+}
+
+
+.container {
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  padding: 20px;
+  max-width: 800px;
+  background-color: #01434a;
+  border: 1px solid #b2c0f7;
+}
+
+
+header {
   padding: 10px;
+  background-color: #378766;
+  border-bottom: 1px solid #b2c0f7;
 }
 
 
 footer {
-  margin-top: 10px;
+  margin-top: 20px;
   padding: 10px;
-  background-color: #f8f9fa;
-  border-top: 1px solid #e9ecef;
+  background-color: #378766;
+  border-top: 1px solid #b2c0f7;
+  text-align: center;
+}
+
+
+h1, h2 {
+  margin-bottom: 10px;
+  color: #f0e6d2;
+}
+
+
+form {
+  margin-top: 20px;
+  padding: 10px;
+}
+
+
+input[type="text"],
+input[type="password"] {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 8px;
+  background-color: #f8f4e3;
+  color: #2c2c2c;
+  border: 1px solid #b2c0f7;
+}
+
+
+input[type="submit"] {
+  padding: 10px 20px;
+  background-color: #b2c0f7;
+  border: none;
+  color: #71bef5;
+  cursor: pointer;
+}
+
+
+.float-left {
+  float: left;
+  margin-right: 10px;
+}
+
+
+.clear {
+  clear: both;
+}
+
+
+.content {
+  margin-top: 20px;
+  padding: 10px;
 }

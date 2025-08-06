@@ -1,8 +1,12 @@
 ﻿@{
     ViewData["Title"] = "Index";
 }
-
+<head>
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/style.css" />
+</head>
 <div>
-    <h1>Index</h1>
-    <p>Bienvenidos al sitio web de NombreProyecto</p>
+    <a href='@Url.Action("IniciarSesion")'>Iniciar sesión</a>
+    <a href='@Url.Action("Registrarse")'>Registrarse si no tenés cuenta</a>
 </div>
+

@@ -1,0 +1,23 @@
+﻿@{
+    ViewData["Title"] = "Index";
+}
+<head>
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/style.css" />
+</head>
+<div class="container">
+    <h1>IRegistrese</h1>
+    <form method="post" action="/Home/Ingresar">
+        Nombre de Usuario:
+        <input type="text" name="Username" placeholder="Crear usuario" required /><br />
+        Crear contraseña:
+        <input type="password" name="password" required /><br />
+        <input type="submit" value="Ingresar" />
+    </form>
+
+    @if (ViewBag.Error != null)
+    {
+        <p>@ViewBag.Error</p>
+    }
+</div>
+
