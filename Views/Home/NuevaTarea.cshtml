@@ -1,0 +1,24 @@
+@{
+    ViewData["Title"] = "Crear Tarea";
+}
+<head>
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/style.css" />
+</head>
+<div>
+    <h1>NUEVA TAREA</h1>
+    <form method="post" action="/Home/NuevaTarea">
+        Nombre de la tarea:
+        <input type="text" name="Titulo" required /><br />
+        Estado de la tarea:<br />
+        <input type= "radio" name="estado" value="activa" />Activa<br/>
+        <input type= "radio" name="estado" value="finalizada" />Finalizada<br/>
+        <input type= "radio" name="estado" value="eliminada" />Eliminada<br/>
+        <input type="submit" value="Crear" />
+    </form>
+    
+    @if (ViewBag.Error != null)
+    {
+        <p>@ViewBag.Error</p>
+    }
+</div>

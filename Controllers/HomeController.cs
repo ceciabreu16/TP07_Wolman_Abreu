@@ -33,7 +33,7 @@ public class HomeController : Controller
         if (nuevoUsuario != null)
         {
             HttpContext.Session.SetString("usuario", nuevoUsuario.Username);
-            return RedirectToAction("Integrantes"); // 
+            return RedirectToAction("Usuarios"); // 
         }
         else
         {
@@ -48,6 +48,10 @@ public class HomeController : Controller
         {
             return RedirectToAction("Index");
         }
+        return View();
+    }
+    public IActionResult NuevaTarea(string Titulo, string estado) {
+        
         return View();
     }
 
