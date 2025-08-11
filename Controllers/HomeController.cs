@@ -41,6 +41,21 @@ public class HomeController : Controller
             return View("IniciarSesion");
         }
     }
+    public IActionResult Registrar(string Username, string password)
+    {
+        Usuario nuevoUsuario = BD.BuscarUsuario(Username, password);
+        if (nuevoUsuario != null) // aca hay que comparar usuarios
+        {
+             ViewBag.Error = "Usuario ya existente.";
+             return View("Registrarse"); // 
+        }
+        else
+        {
+            // hay que agregar insertar crear el usuario
+            HttpContext.Session.SetString("usuario", nuevoUsuario.Username);
+            return RedirectToAction("Usuarios"); 
+        }
+    }
     public IActionResult Usuarios()
     {
         ViewBag.usuario = HttpContext.Session.GetString("usuario");

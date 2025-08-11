@@ -72,4 +72,33 @@ INSERT INTO Usuarios (Username, Password) VALUES
 ('clarawolman', '1234');
 GO
 
+
+CREATE PROCEDURE InsertarUsuario
+@Username varchar(50),
+@Password varchar(50)
+AS
+BEGIN
+SELECT * from Usuarios WHERE  Username= @Username 
+END 
+GO 
+
+
+ALTER PROCEDURE InsertarUsuario
+@Username varchar(50),
+@Password varchar(50)
+AS
+BEGIN 
+ IF NOT EXISTS (SELECT 1 from Usuarios WHERE Username = @Username)
+	BEGIN 
+	INSERT INTO Usuarios (Username, Password)
+	VALUES (@Username, @Password)
+	PRINT 'INSERTO OK'
+	END 
+	ELSE 
+	BEGIN 
+	PRINT 'NO INSERTO'
+	END
+	END
+
+
 */
