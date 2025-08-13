@@ -1,4 +1,5 @@
-using System.Runtime.CompilerServices;
+
+namespace try_catch_poc.Models;
 
 public class Usuario
 {

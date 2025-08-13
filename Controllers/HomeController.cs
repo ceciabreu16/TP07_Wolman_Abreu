@@ -1,9 +1,6 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using TPNoNum_Wolman_Abreu.Models;
 using try_catch_poc.Models;
-
-
 namespace TPNoNum_Wolman_Abreu.Controllers;
 
 public class HomeController : Controller
@@ -46,14 +43,14 @@ public class HomeController : Controller
         Usuario nuevoUsuario = BD.BuscarUsuario(Username, password);
         if (nuevoUsuario != null) // aca hay que comparar usuarios
         {
-             ViewBag.Error = "Usuario ya existente.";
-             return View("Registrarse"); // 
+            ViewBag.Error = "Usuario ya existente.";
+            return View("Registrarse"); // 
         }
         else
         {
             // hay que agregar insertar crear el usuario
             HttpContext.Session.SetString("usuario", nuevoUsuario.Username);
-            return RedirectToAction("Usuarios"); 
+            return RedirectToAction("Usuarios");
         }
     }
     public IActionResult Usuarios()
@@ -65,9 +62,24 @@ public class HomeController : Controller
         }
         return View();
     }
-    public IActionResult NuevaTarea(string Titulo, string estado) {
-        
+    public IActionResult NuevaTarea(string Titulo, string estado)
+    {
+
         return View();
+    }
+    public IActionResult TareasLista()
+    {
+        string usuarioLogueado = HttpContext.Session.GetString("usuario");
+
+        if (string.IsNullOrEmpty(usuarioLogueado))
+        {
+            return RedirectToAction("Index");
+        }
+
+        ViewBag.listaTareas = BD.ListarTareas(usuarioLogueado);
+        ViewBag.usuario = usuarioLogueado;
+
+        return View("Usuarios");
     }
 
 }

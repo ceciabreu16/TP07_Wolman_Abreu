@@ -1,7 +1,38 @@
+
 using Microsoft.Data.SqlClient;
 using Dapper;
 
-namespace try_catch_poc.Models;
+namespace try_catch_poc.Models
+{public static class BD
+    {
+        private static string _connectionString = @"Server=localhost;DataBase=TP06_Prog;Integrated Security=True;TrustServerCertificate=True;";
+
+        public static Usuario BuscarUsuario(string Username, string password)
+        {
+            Usuario nuevoUsuario = null;
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                string sql = "SELECT * FROM Usuarios WHERE Username = @Username AND Password = @Password";
+                nuevoUsuario = connection.QueryFirstOrDefault<Usuario>(sql, new { Username, password });
+            }
+            return nuevoUsuario;
+        }
+
+        public static List<Tareas> ListarTareas(string username)
+        {
+            List<Tareas> listaTareas = new List<Tareas>();
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                string sql = "SELECT T.* FROM Tareas T INNER JOIN TareasCompartidas TC ON T.Id = TC.TareaId INNER JOIN Usuarios U ON U.Id = TC.UsuarioId WHERE U.Username = @username";
+                listaTareas = connection.Query<Tareas>(sql, new { username }).ToList();
+            }
+            return listaTareas;
+        }
+    }
+}
+
+
+/*namespace try_catch_poc.Models;
 
 public static class BD
 {
@@ -27,7 +58,18 @@ public static class BD
         }
         return nuevoUsuario;
     }
-}
+    public static List<Tareas> ListarTareas(string username)
+    {
+        List<Tareas> listaTareas = new List<Tareas>();
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            string sql = "SELECT T.* FROM Tareas T INNER JOIN TareasCompartidas TC ON T.Id = TC.TareaId INNER JOIN Usuarios U ON U.Id = TC.UsuarioId WHERE U.Username = @username";
+            listaTareas = connection.Query<Tareas>(sql, new { username }).ToList();
+        }
+        return listaTareas;
+    }
+
+}*/
 /*
 -- Crear la base de datos
 CREATE DATABASE TP06_Prog;
@@ -68,8 +110,8 @@ GO
 
 -- Insertar usuarios
 INSERT INTO Usuarios (Username, Password) VALUES 
-('ceciabreu', '1234'),
-('clarawolman', '1234');
+('ceciabreu', 'ceci16'),
+('clarawolman', 'clara13');
 GO
 
 

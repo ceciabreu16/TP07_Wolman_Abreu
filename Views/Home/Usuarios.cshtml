@@ -4,5 +4,7 @@
 
 <p>Usuario:@ViewBag.usuario</p>
 <a href='@Url.Action("NuevaTarea")'>AGREGAR TAREA</a>
-<p>lista de tareas bla bla</p>
+@foreach (Tarea tarea in ViewBag.listaTareas) {
+    <p>@listaTareas[i].Titulo</p>
+}
 
