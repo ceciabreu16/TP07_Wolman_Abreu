@@ -2,9 +2,30 @@
     ViewData["Title"] = "Usuario";
 }
 
-<p>Usuario:@ViewBag.usuario</p>
+<p>Usuario: @ViewBag.usuario</p>
 <a href='@Url.Action("NuevaTarea")'>AGREGAR TAREA</a>
-@foreach (Tarea tarea in ViewBag.listaTareas) {
-    <p>@listaTareas[i].Titulo</p>
+@if (ViewBag.listaTareas != null)
+{
+    foreach (var tarea in ViewBag.listaTareas)
+    {
+        <div class="tarea-card">
+            <span><strong>@tarea.Titulo</strong></span>
+            <span>- Estado: 
+                @{
+                    if (tarea.EstaFinalizada) {
+                        <span>Finalizada</span>;
+                    } else if (tarea.EstaEliminada) {
+                        <span>Eliminada</span>;
+                    } else {
+                        <span>Activa</span>;
+                    }
+                }
+            </span>
+            <a href='@Url.Action("VerTarea", "Home", new { id = tarea.Id })'>Editar</a>
+        </div>
+    }
 }
-
+else
+{
+    <p>No hay tareas disponibles.</p>
+}

@@ -3,7 +3,8 @@ using Microsoft.Data.SqlClient;
 using Dapper;
 
 namespace try_catch_poc.Models
-{public static class BD
+{
+    public static class BD
     {
         private static string _connectionString = @"Server=localhost;DataBase=TP06_Prog;Integrated Security=True;TrustServerCertificate=True;";
 
@@ -27,6 +28,46 @@ namespace try_catch_poc.Models
                 listaTareas = connection.Query<Tareas>(sql, new { username }).ToList();
             }
             return listaTareas;
+        }
+        public static void InsertarTarea(string titulo, string estado, string username)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                // Insertar tarea sin EstaActiva
+                string sqlTarea = "INSERT INTO Tareas (Titulo, FechaCreacion, EstaFinalizada, EstaEliminada) OUTPUT INSERTED.Id VALUES (@titulo, GETDATE(), @finalizada, @eliminada)";
+
+                bool finalizada = estado == "finalizada";
+                bool eliminada = estado == "eliminada";
+
+                int tareaId = connection.QuerySingle<int>(sqlTarea, new { titulo, finalizada, eliminada });
+
+                // Obtener el Id del usuario
+                string sqlUsuario = "SELECT Id FROM Usuarios WHERE Username = @username";
+                int usuarioId = connection.QuerySingle<int>(sqlUsuario, new { username });
+
+                // Insertar en TareasCompartidas
+                string sqlCompartir = "INSERT INTO TareasCompartidas (TareaId, UsuarioId, UsuarioEsCreador) VALUES (@tareaId, @usuarioId, 1)";
+                connection.Execute(sqlCompartir, new { tareaId, usuarioId });
+            }
+        }
+        public static Tareas BuscarTareaPorId(int id)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                string sql = "SELECT * FROM Tareas WHERE Id = @id";
+                return connection.QueryFirstOrDefault<Tareas>(sql, new { id });
+            }
+        }
+
+        public static void EditarTarea(int id, string titulo, string estado)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                bool finalizada = estado == "finalizada";
+                bool eliminada = estado == "eliminada";
+                string sql = "UPDATE Tareas SET Titulo = @titulo, EstaFinalizada = @finalizada, EstaEliminada = @eliminada WHERE Id = @id";
+                connection.Execute(sql, new { id, titulo, finalizada, eliminada });
+            }
         }
     }
 }

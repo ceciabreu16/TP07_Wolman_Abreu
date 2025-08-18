@@ -60,10 +60,23 @@ public class HomeController : Controller
         {
             return RedirectToAction("Index");
         }
+        // Asignar una lista vacía si no venís por TareasLista
+        ViewBag.listaTareas = new List<Tareas>();
         return View();
     }
     public IActionResult NuevaTarea(string Titulo, string estado)
     {
+        string usuarioLogueado = HttpContext.Session.GetString("usuario");
+        if (string.IsNullOrEmpty(usuarioLogueado))
+        {
+            return RedirectToAction("Index");
+        }
+
+        if (!string.IsNullOrEmpty(Titulo) && !string.IsNullOrEmpty(estado))
+        {
+            BD.InsertarTarea(Titulo, estado, usuarioLogueado);
+            return RedirectToAction("TareasLista"); // Mostrá la lista actualizada
+        }
 
         return View();
     }
@@ -80,6 +93,21 @@ public class HomeController : Controller
         ViewBag.usuario = usuarioLogueado;
 
         return View("Usuarios");
+    }
+    public IActionResult VerTarea(int id)
+    {
+        var tarea = BD.BuscarTareaPorId(id);
+        if (tarea == null)
+            return RedirectToAction("Usuarios");
+        ViewBag.tarea = tarea;
+        return View();
+    }
+
+    [HttpPost]
+    public IActionResult EditarTarea(int id, string Titulo, string estado)
+    {
+        BD.EditarTarea(id, Titulo, estado);
+        return RedirectToAction("Usuarios");
     }
 
 }

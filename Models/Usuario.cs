@@ -1,4 +1,7 @@
 
+
+using Microsoft.Data.SqlClient;
+using Dapper;
 namespace try_catch_poc.Models;
 
 public class Usuario

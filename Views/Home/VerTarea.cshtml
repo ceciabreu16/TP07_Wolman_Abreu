@@ -1,0 +1,19 @@
+@{
+    ViewData["Title"] = "Editar Tarea";
+    var tarea = ViewBag.tarea as try_catch_poc.Models.Tareas;
+}
+
+<h2>Editar Tarea</h2>
+<form method="post" action="/Home/EditarTarea">
+    <input type="hidden" name="id" value="@tarea.Id" />
+    Nombre de la tarea:
+    <input type="text" name="Titulo" value="@tarea.Titulo" required /><br />
+
+    Estado de la tarea:<br />
+    <input type="radio" name="estado" value="activa" @( (!tarea.EstaFinalizada && !tarea.EstaEliminada) ? "checked" : "" ) /> Activa<br />
+    <input type="radio" name="estado" value="finalizada" @( (tarea.EstaFinalizada) ? "checked" : "" ) /> Finalizada<br />
+    <input type="radio" name="estado" value="eliminada" @( (tarea.EstaEliminada) ? "checked" : "" ) /> Eliminada<br />
+
+    <input type="submit" value="Guardar cambios" />
+</form>
+<a href="@Url.Action("Usuarios")">Volver</a>
