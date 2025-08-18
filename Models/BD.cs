@@ -69,6 +69,24 @@ namespace try_catch_poc.Models
                 connection.Execute(sql, new { id, titulo, finalizada, eliminada });
             }
         }
+        public static bool UsuarioExiste(string username)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                string sql = "SELECT COUNT(*) FROM Usuarios WHERE Username = @username";
+                int count = connection.QuerySingle<int>(sql, new { username });
+                return count > 0;
+            }
+        }
+
+        public static void RegistrarUsuario(string username, string password)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                string sql = "INSERT INTO Usuarios (Username, Password) VALUES (@username, @password)";
+                connection.Execute(sql, new { username, password });
+            }
+        }
     }
 }
 

@@ -109,5 +109,22 @@ public class HomeController : Controller
         BD.EditarTarea(id, Titulo, estado);
         return RedirectToAction("Usuarios");
     }
+    [HttpPost]
+    public IActionResult Registrarse(string Username, string password)
+    {
+        if (BD.UsuarioExiste(Username))
+        {
+            ViewBag.Error = "El usuario ya existe, elija otro nombre.";
+            return View();
+        }
+        else
+        {
+            BD.RegistrarUsuario(Username, password);
+            ViewBag.Exito = "¡Registro exitoso!";
+            ViewBag.ShowLoginLink = true;
+            return View();
+        }
+        //problemas conel funcionamiento de las tareas: 1)dos tareas con el mismo nombre no pueden ser registradas 2) cuando agrego / edito una y cambio de view, desaparece la lista de tareas, y vuelve a aparecer cuando cargo otra nueva tarea. cuando la tarea esta eliminada debe dejar de mostrarse. 3) en la parte de agregar una tarea debe registrarse la fecha en la que la person necesita la tarea, como en un calendario que registras 
+    }
 
 }
