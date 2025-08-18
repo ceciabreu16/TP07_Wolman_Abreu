@@ -55,29 +55,32 @@ public class HomeController : Controller
     }
     public IActionResult Usuarios()
     {
-        ViewBag.usuario = HttpContext.Session.GetString("usuario");
-        if (string.IsNullOrEmpty(ViewBag.usuario))
-        {
-            return RedirectToAction("Index");
-        }
-        // Asignar una lista vacía si no venís por TareasLista
-        ViewBag.listaTareas = new List<Tareas>();
-        return View();
-    }
-    public IActionResult NuevaTarea(string Titulo, string estado)
-    {
         string usuarioLogueado = HttpContext.Session.GetString("usuario");
         if (string.IsNullOrEmpty(usuarioLogueado))
         {
             return RedirectToAction("Index");
         }
+        ViewBag.usuario = usuarioLogueado;
+        ViewBag.listaTareas = BD.ListarTareas(usuarioLogueado);
+        return View();
+    }
+    public IActionResult NuevaTarea(string Titulo, string estado, DateTime FechaCreacion)
+    {
+        string usuarioLogueado = HttpContext.Session.GetString("usuario");
+        if (string.IsNullOrEmpty(usuarioLogueado))
+            return RedirectToAction("Index");
 
-        if (!string.IsNullOrEmpty(Titulo) && !string.IsNullOrEmpty(estado))
+        if (!string.IsNullOrEmpty(Titulo) && !string.IsNullOrEmpty(estado) && FechaCreacion != default(DateTime))
         {
-            BD.InsertarTarea(Titulo, estado, usuarioLogueado);
-            return RedirectToAction("TareasLista"); // Mostrá la lista actualizada
+            var tareas = BD.ListarTareas(usuarioLogueado);
+            if (tareas.Any(t => t.Titulo.Trim().ToLower() == Titulo.Trim().ToLower() && !t.EstaEliminada))
+            {
+                ViewBag.Error = "Ya existe una tarea con ese nombre.";
+                return View();
+            }
+            BD.InsertarTarea(Titulo, estado, usuarioLogueado, FechaCreacion);
+            return RedirectToAction("TareasLista");
         }
-
         return View();
     }
     public IActionResult TareasLista()
@@ -104,11 +107,12 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    public IActionResult EditarTarea(int id, string Titulo, string estado)
+    public IActionResult EditarTarea(int id, string Titulo, string estado, DateTime FechaCreacion)
     {
-        BD.EditarTarea(id, Titulo, estado);
+        BD.EditarTarea(id, Titulo, estado, FechaCreacion);
         return RedirectToAction("Usuarios");
     }
+    
     [HttpPost]
     public IActionResult Registrarse(string Username, string password)
     {
@@ -124,7 +128,6 @@ public class HomeController : Controller
             ViewBag.ShowLoginLink = true;
             return View();
         }
-        //problemas conel funcionamiento de las tareas: 1)dos tareas con el mismo nombre no pueden ser registradas 2) cuando agrego / edito una y cambio de view, desaparece la lista de tareas, y vuelve a aparecer cuando cargo otra nueva tarea. cuando la tarea esta eliminada debe dejar de mostrarse. 3) en la parte de agregar una tarea debe registrarse la fecha en la que la person necesita la tarea, como en un calendario que registras 
     }
 
 }

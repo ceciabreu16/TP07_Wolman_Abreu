@@ -8,12 +8,12 @@
     <input type="hidden" name="id" value="@tarea.Id" />
     Nombre de la tarea:
     <input type="text" name="Titulo" value="@tarea.Titulo" required /><br />
-
+    Fecha necesaria:
+    <input type="date" name="FechaCreacion" value="@tarea.FechaCreacion.ToString("yyyy-MM-dd")" required /><br />
     Estado de la tarea:<br />
     <input type="radio" name="estado" value="activa" @( (!tarea.EstaFinalizada && !tarea.EstaEliminada) ? "checked" : "" ) /> Activa<br />
     <input type="radio" name="estado" value="finalizada" @( (tarea.EstaFinalizada) ? "checked" : "" ) /> Finalizada<br />
     <input type="radio" name="estado" value="eliminada" @( (tarea.EstaEliminada) ? "checked" : "" ) /> Eliminada<br />
-
     <input type="submit" value="Guardar cambios" />
 </form>
 <a href="@Url.Action("Usuarios")">Volver</a>

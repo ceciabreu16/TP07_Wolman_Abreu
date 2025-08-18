@@ -6,7 +6,9 @@
 <a href='@Url.Action("NuevaTarea")'>AGREGAR TAREA</a>
 @if (ViewBag.listaTareas != null)
 {
-    foreach (var tarea in ViewBag.listaTareas)
+    @foreach (var tarea in ViewBag.listaTareas)
+    {
+    if (!tarea.EstaEliminada)
     {
         <div class="tarea-card">
             <span><strong>@tarea.Titulo</strong></span>
@@ -14,15 +16,15 @@
                 @{
                     if (tarea.EstaFinalizada) {
                         <span>Finalizada</span>;
-                    } else if (tarea.EstaEliminada) {
-                        <span>Eliminada</span>;
                     } else {
                         <span>Activa</span>;
                     }
                 }
             </span>
+            <span>- Fecha: @tarea.FechaCreacion.ToString("yyyy-MM-dd")</span>
             <a href='@Url.Action("VerTarea", "Home", new { id = tarea.Id })'>Editar</a>
         </div>
+    }
     }
 }
 else

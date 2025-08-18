@@ -29,23 +29,18 @@ namespace try_catch_poc.Models
             }
             return listaTareas;
         }
-        public static void InsertarTarea(string titulo, string estado, string username)
+        public static void InsertarTarea(string titulo, string estado, string username, DateTime fechaCreacion)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                // Insertar tarea sin EstaActiva
-                string sqlTarea = "INSERT INTO Tareas (Titulo, FechaCreacion, EstaFinalizada, EstaEliminada) OUTPUT INSERTED.Id VALUES (@titulo, GETDATE(), @finalizada, @eliminada)";
-
+                string sqlTarea = "INSERT INTO Tareas (Titulo, FechaCreacion, EstaFinalizada, EstaEliminada) OUTPUT INSERTED.Id VALUES (@titulo, @fechaCreacion, @finalizada, @eliminada)";
                 bool finalizada = estado == "finalizada";
                 bool eliminada = estado == "eliminada";
+                int tareaId = connection.QuerySingle<int>(sqlTarea, new { titulo, fechaCreacion, finalizada, eliminada });
 
-                int tareaId = connection.QuerySingle<int>(sqlTarea, new { titulo, finalizada, eliminada });
-
-                // Obtener el Id del usuario
                 string sqlUsuario = "SELECT Id FROM Usuarios WHERE Username = @username";
                 int usuarioId = connection.QuerySingle<int>(sqlUsuario, new { username });
 
-                // Insertar en TareasCompartidas
                 string sqlCompartir = "INSERT INTO TareasCompartidas (TareaId, UsuarioId, UsuarioEsCreador) VALUES (@tareaId, @usuarioId, 1)";
                 connection.Execute(sqlCompartir, new { tareaId, usuarioId });
             }
@@ -59,14 +54,14 @@ namespace try_catch_poc.Models
             }
         }
 
-        public static void EditarTarea(int id, string titulo, string estado)
+        public static void EditarTarea(int id, string titulo, string estado, DateTime fechaCreacion)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 bool finalizada = estado == "finalizada";
                 bool eliminada = estado == "eliminada";
-                string sql = "UPDATE Tareas SET Titulo = @titulo, EstaFinalizada = @finalizada, EstaEliminada = @eliminada WHERE Id = @id";
-                connection.Execute(sql, new { id, titulo, finalizada, eliminada });
+                string sql = "UPDATE Tareas SET Titulo = @titulo, EstaFinalizada = @finalizada, EstaEliminada = @eliminada, FechaCreacion = @fechaCreacion WHERE Id = @id";
+                connection.Execute(sql, new { id, titulo, finalizada, eliminada, fechaCreacion });
             }
         }
         public static bool UsuarioExiste(string username)
@@ -89,46 +84,6 @@ namespace try_catch_poc.Models
         }
     }
 }
-
-
-/*namespace try_catch_poc.Models;
-
-public static class BD
-{
-    private static string _connectionString = @"Server=localhost;DataBase=TP06_Prog;Integrated Security=True;TrustServerCertificate=True;";
-
-    public static List<Usuario> LevantarIntegrante()
-    {
-        List<Usuario> usuarios = new List<Usuario>();
-        using (SqlConnection connection = new SqlConnection(_connectionString))
-        {
-            string query = "SELECT * FROM Integrante";
-            usuarios = connection.Query<Usuario>(query).ToList();
-        }
-        return usuarios;
-    }
-    public static Usuario BuscarUsuario(string Username, string password)
-    {
-        Usuario nuevoUsuario = null;
-        using (SqlConnection connection = new SqlConnection(_connectionString))
-        {
-            string sql = "SELECT * FROM Usuarios WHERE Username = @Username AND Password = @Password";
-            nuevoUsuario = connection.QueryFirstOrDefault<Usuario>(sql, new { Username, password });
-        }
-        return nuevoUsuario;
-    }
-    public static List<Tareas> ListarTareas(string username)
-    {
-        List<Tareas> listaTareas = new List<Tareas>();
-        using (SqlConnection connection = new SqlConnection(_connectionString))
-        {
-            string sql = "SELECT T.* FROM Tareas T INNER JOIN TareasCompartidas TC ON T.Id = TC.TareaId INNER JOIN Usuarios U ON U.Id = TC.UsuarioId WHERE U.Username = @username";
-            listaTareas = connection.Query<Tareas>(sql, new { username }).ToList();
-        }
-        return listaTareas;
-    }
-
-}*/
 /*
 -- Crear la base de datos
 CREATE DATABASE TP06_Prog;
@@ -200,6 +155,4 @@ BEGIN
 	PRINT 'NO INSERTO'
 	END
 	END
-
-
 */
