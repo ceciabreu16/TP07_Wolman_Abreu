@@ -5,7 +5,10 @@
     <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="~/css/style.css" />
 </head>
-<div>
+<header>
+    <h2>Bienvenido a su organizador de tareas!</h2>
+</header>
+<div class="index">
     <a href='@Url.Action("IniciarSesion")'>Iniciar sesión</a><br />
     <a href='@Url.Action("Registrarse")'>Registrarse si no tenés cuenta</a>
 </div>
