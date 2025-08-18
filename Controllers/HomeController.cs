@@ -112,7 +112,7 @@ public class HomeController : Controller
         BD.EditarTarea(id, Titulo, estado, FechaCreacion);
         return RedirectToAction("Usuarios");
     }
-    
+
     [HttpPost]
     public IActionResult Registrarse(string Username, string password)
     {
@@ -129,5 +129,10 @@ public class HomeController : Controller
             return View();
         }
     }
-
+    [HttpPost]
+    public IActionResult CerrarSesion()
+    {
+        HttpContext.Session.Clear();
+        return RedirectToAction("Index");
+    }
 }
