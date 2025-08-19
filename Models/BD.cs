@@ -82,77 +82,87 @@ namespace try_catch_poc.Models
                 connection.Execute(sql, new { username, password });
             }
         }
+        public static bool UsuarioExiste(string username)
+        {
+            using (SqlConnection con = new SqlConnection(_connectionString))
+            {
+                string query = "SELECT COUNT(*) FROM Usuarios WHERE Username = @username";
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@username", username);
+                con.Open();
+                int count = (int)cmd.ExecuteScalar();
+                return count > 0;
+            }
+        }
+
+        public static int ObtenerIdUsuario(string username)
+        {
+            using (SqlConnection con = new SqlConnection(_connectionString))
+            {
+                string query = "SELECT Id FROM Usuarios WHERE Username = @username";
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@username", username);
+                con.Open();
+                object result = cmd.ExecuteScalar();
+                return result != null ? (int)result : -1;
+            }
+        }
+
+        public static bool TareaYaCompartidaConUsuario(int tareaId, int usuarioId)
+        {
+            using (SqlConnection con = new SqlConnection(_connectionString))
+            {
+                string query = "SELECT COUNT(*) FROM TareasCompartidas WHERE TareaId = @tareaId AND UsuarioId = @usuarioId";
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@tareaId", tareaId);
+                cmd.Parameters.AddWithValue("@usuarioId", usuarioId);
+                con.Open();
+                int count = (int)cmd.ExecuteScalar();
+                return count > 0;
+            }
+        }
+
+        public static void AgregarTareaCompartida(int tareaId, int usuarioId)
+        {
+            using (SqlConnection con = new SqlConnection(_connectionString))
+            {
+                string query = "INSERT INTO TareasCompartidas (TareaId, UsuarioId) VALUES (@tareaId, @usuarioId)";
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@tareaId", tareaId);
+                cmd.Parameters.AddWithValue("@usuarioId", usuarioId);
+                con.Open();
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public static List<Tareas> TareasCompartidasConUsuario(int usuarioId)
+        {
+            var tareas = new List<Tareas>();
+            using (SqlConnection con = new SqlConnection(_connectionString))
+            {
+                string query = @"SELECT t.* FROM Tareas t
+                             INNER JOIN TareasCompartidas tc ON t.Id = tc.TareaId
+                             WHERE tc.UsuarioId = @usuarioId";
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@usuarioId", usuarioId);
+                con.Open();
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        // Asumiendo que tienes un constructor adecuado
+                        tareas.Add(new Tareas
+                        {
+                            Id = (int)reader["Id"],
+                            Titulo = reader["Titulo"].ToString(),
+                            Descripcion = reader["Descripcion"].ToString(),
+                            // ... otras propiedades
+                        });
+                    }
+                }
+            }
+            return tareas;
+        }
     }
 }
-/*
--- Crear la base de datos
-CREATE DATABASE TP06_Prog;
-GO
 
-USE TP06_Prog;
-GO
-
--- Tabla de usuarios
-CREATE TABLE Usuarios (
-    Id INT IDENTITY(1,1) PRIMARY KEY,
-    Username NVARCHAR(100) NOT NULL UNIQUE,
-    Password NVARCHAR(255) NOT NULL
-);
-GO
-
--- Tabla de tareas
-CREATE TABLE Tareas (
-    Id INT IDENTITY(1,1) PRIMARY KEY,
-    Titulo NVARCHAR(255) NOT NULL,
-    FechaCreacion DATETIME NOT NULL DEFAULT GETDATE(),
-    EstaFinalizada BIT NOT NULL DEFAULT 0,
-    EstaEliminada BIT NOT NULL DEFAULT 0,
-);
-GO
-
--- Tabla para compartir tareas con otros usuarios
-CREATE TABLE TareasCompartidas (
-    Id INT IDENTITY(1,1) PRIMARY KEY,
-    TareaId INT NOT NULL,
-    UsuarioId INT NOT NULL,
-	UsuarioEsCreador BIT NOT NULL DEFAULT 0,
-    FOREIGN KEY (TareaId) REFERENCES Tareas(Id),
-    FOREIGN KEY (UsuarioId) REFERENCES Usuarios(Id),
-    CONSTRAINT UC_Tarea_Usuario UNIQUE (TareaId, UsuarioId)
-);
-GO
-
--- Insertar usuarios
-INSERT INTO Usuarios (Username, Password) VALUES 
-('ceciabreu', 'ceci16'),
-('clarawolman', 'clara13');
-GO
-
-
-CREATE PROCEDURE InsertarUsuario
-@Username varchar(50),
-@Password varchar(50)
-AS
-BEGIN
-SELECT * from Usuarios WHERE  Username= @Username 
-END 
-GO 
-
-
-ALTER PROCEDURE InsertarUsuario
-@Username varchar(50),
-@Password varchar(50)
-AS
-BEGIN 
- IF NOT EXISTS (SELECT 1 from Usuarios WHERE Username = @Username)
-	BEGIN 
-	INSERT INTO Usuarios (Username, Password)
-	VALUES (@Username, @Password)
-	PRINT 'INSERTO OK'
-	END 
-	ELSE 
-	BEGIN 
-	PRINT 'NO INSERTO'
-	END
-	END
-*/

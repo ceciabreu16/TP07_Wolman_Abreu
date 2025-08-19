@@ -30,27 +30,12 @@ public class HomeController : Controller
         if (nuevoUsuario != null)
         {
             HttpContext.Session.SetString("usuario", nuevoUsuario.Username);
-            return RedirectToAction("Usuarios"); // 
+            return RedirectToAction("Usuarios");
         }
         else
         {
             ViewBag.Error = "Usuario o contraseña no válidos.";
             return View("IniciarSesion");
-        }
-    }
-    public IActionResult Registrar(string Username, string password)
-    {
-        Usuario nuevoUsuario = BD.BuscarUsuario(Username, password);
-        if (nuevoUsuario != null) // aca hay que comparar usuarios
-        {
-            ViewBag.Error = "Usuario ya existente.";
-            return View("Registrarse"); // 
-        }
-        else
-        {
-            // hay que agregar insertar crear el usuario
-            HttpContext.Session.SetString("usuario", nuevoUsuario.Username);
-            return RedirectToAction("Usuarios");
         }
     }
     public IActionResult Usuarios()
@@ -68,16 +53,12 @@ public class HomeController : Controller
     {
         string usuarioLogueado = HttpContext.Session.GetString("usuario");
         if (string.IsNullOrEmpty(usuarioLogueado))
+        {
             return RedirectToAction("Index");
-
+        }
         if (!string.IsNullOrEmpty(Titulo) && !string.IsNullOrEmpty(estado) && FechaCreacion != default(DateTime))
         {
             var tareas = BD.ListarTareas(usuarioLogueado);
-            if (tareas.Any(t => t.Titulo.Trim().ToLower() == Titulo.Trim().ToLower() && !t.EstaEliminada))
-            {
-                ViewBag.Error = "Ya existe una tarea con ese nombre.";
-                return View();
-            }
             BD.InsertarTarea(Titulo, estado, usuarioLogueado, FechaCreacion);
             return RedirectToAction("TareasLista");
         }
@@ -101,7 +82,9 @@ public class HomeController : Controller
     {
         var tarea = BD.BuscarTareaPorId(id);
         if (tarea == null)
+        {
             return RedirectToAction("Usuarios");
+        }
         ViewBag.tarea = tarea;
         return View();
     }
@@ -125,10 +108,35 @@ public class HomeController : Controller
         {
             BD.RegistrarUsuario(Username, password);
             ViewBag.Exito = "¡Registro exitoso!";
-            ViewBag.ShowLoginLink = true;
+            //ViewBag.ShowLoginLink = true;
             return View();
         }
     }
+    public IActionResult CompartirTarea(int tareaId, string usuarioCompartir)
+    {
+        if (BD.UsuarioExiste(usuarioCompartir))
+        {
+            int usuarioId = BD.ObtenerIdUsuario(usuarioCompartir);
+
+            if (!BD.TareaYaCompartidaConUsuario(tareaId, usuarioId))
+            {
+                BD.AgregarTareaCompartida(tareaId, usuarioId);
+                ViewBag.TCompartidaUsuario = usuarioCompartir;
+                ViewBag.Exito = "El usuario " + usuarioCompartir + " ya podrá ver la tarea compartida";
+            }
+            else
+            {
+                ViewBag.Error = "La tarea ya está compartida con ese usuario.";
+            }
+            return View();
+        }
+        else
+        {
+            ViewBag.Error = "El usuario no fue encontrado";
+            return View();
+        }
+    }
+
     [HttpPost]
     public IActionResult CerrarSesion()
     {

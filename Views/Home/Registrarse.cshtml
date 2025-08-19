@@ -1,4 +1,4 @@
-﻿@{
+﻿@*@{
     ViewData["Title"] = "Registrarse";
 }
 
@@ -23,3 +23,33 @@
         <a href="@Url.Action("IniciarSesion", "Home")">Ir a iniciar sesión</a>
     }
 }
+*@
+
+@{
+    ViewData["Title"] = "Registrarse";
+}
+<main class="centered">
+    <div class="card">
+        <h1>Registrarse</h1>
+        <form method="post" action="/Home/Registrarse" class="form">
+            <label>Nombre de usuario:</label>
+            <input type="text" name="Username" required />
+            <label>Contraseña:</label>
+            <input type="password" name="password" required />
+            <input type="submit" value="Registrar" class="btn" />
+        </form>
+
+        @if (ViewBag.Error != null)
+        {
+            <p class="error">@ViewBag.Error</p>
+        }
+        @if (ViewBag.Exito != null)
+        {
+            <p class="success">@ViewBag.Exito</p>
+            @if (ViewBag.ShowLoginLink != null && ViewBag.ShowLoginLink)
+            {
+                <a class="btn secondary" href="@Url.Action("IniciarSesion", "Home")">Ir a iniciar sesión</a>
+            }
+        }
+    </div>
+</main>

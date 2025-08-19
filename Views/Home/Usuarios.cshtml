@@ -1,4 +1,4 @@
-@{
+@*@{
     ViewData["Title"] = "Usuario";
 }
 
@@ -34,3 +34,40 @@ else
 <form method="post" action="@Url.Action("CerrarSesion", "Home")" style="text-align:center; margin-top:2em;">
     <input type="submit" value="Cerrar sesión" style="font-size:1.1em; padding:0.6em 1.3em; background:#e24b98; color:#fff; border-radius:8px; border:none; cursor:pointer;" />
 </form>
+*@
+
+@{
+    ViewData["Title"] = "Usuario";
+}
+<header>
+    <h2>Usuario: @ViewBag.usuario</h2>
+</header>
+<main>
+    <a class="btn" href='@Url.Action("NuevaTarea")'>Agregar Tarea</a>
+    
+    <div class="task-grid">
+        @if (ViewBag.listaTareas != null)
+        {
+            @foreach (var tarea in ViewBag.listaTareas)
+            {
+                if (!tarea.EstaEliminada)
+                {
+                    <div class="task-card">
+                        <h3>@tarea.Titulo</h3>
+                        <p><strong>Estado:</strong> @(tarea.EstaFinalizada ? "Finalizada" : "Activa")</p>
+                        <p><strong>Fecha:</strong> @tarea.FechaCreacion.ToString("yyyy-MM-dd")</p>
+                        <a class="btn secondary" href='@Url.Action("VerTarea", "Home", new { id = tarea.Id })'>Detalles</a>
+                    </div>
+                }
+            }
+        }
+        else
+        {
+            <p>No hay tareas disponibles.</p>
+        }
+    </div>
+
+    <form method="post" action="@Url.Action("CerrarSesion", "Home")" class="logout-form">
+        <input type="submit" value="Cerrar sesión" class="btn danger" />
+    </form>
+</main>

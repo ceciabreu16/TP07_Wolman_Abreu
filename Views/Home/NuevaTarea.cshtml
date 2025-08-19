@@ -1,4 +1,4 @@
-@{
+@*@{
     ViewData["Title"] = "Crear Tarea";
 }
 <head>
@@ -23,3 +23,37 @@
         <p>@ViewBag.Error</p>
     }
 </div>
+*@
+
+@{
+    ViewData["Title"] = "Crear Tarea";
+}
+<head>
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/style.css" />
+</head>
+<main class="centered">
+    <div class="card">
+        <h1>Nueva tarea</h1>
+        <form method="post" action="/Home/NuevaTarea" class="form">
+            <label>Nombre de la tarea:</label>
+            <input type="text" name="Titulo" required />
+            
+            <label>Fecha para la tarea:</label>
+            <input type="date" name="FechaCreacion" required />
+            
+            <label>Estado de la tarea:</label>
+            <div class="radio-group">
+                <label><input type="radio" name="estado" value="activa" /> Activa</label>
+                <label><input type="radio" name="estado" value="finalizada" /> Finalizada</label>
+            </div>
+
+            <input type="submit" value="Crear" class="btn" />
+        </form>
+
+        @if (ViewBag.Error != null)
+        {
+            <p class="error">@ViewBag.Error</p>
+        }
+    </div>
+</main>

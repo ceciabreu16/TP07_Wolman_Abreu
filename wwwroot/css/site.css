@@ -1,57 +1,135 @@
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Layout general */
 body {
-  background-color: rgb(230, 219, 243);
-  font-family: 'Segoe UI', 'Roboto', sans-serif;
-  color: #333;
-  margin: 0;
-  padding: 0;
+    background-color: #f8f8fc;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
-main, section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 2em;
-}
-
-header h2 {
-width: 100%;
-text-align: center;
-color: white;
-background-color: rgb(116, 160, 175);
-padding: 10%;
-border-radius: 10px;
-}
-
-.index a {
-  width: 100%;
-  top: 2%;
-  bottom:3%;
-  border: 1px solid rgb(116, 160, 175);
-  padding: 5%;
-  text-align: center;
-  border-radius: 10px;
-
-}
-
-.container {
-  border: 1px solid #ccc;
-    padding: 1%;
+/* Header y Footer */
+header, footer {
+    background-color: #605280; /* violeta cálido */
+    color: white;
+    padding: 1rem;
     text-align: center;
+}
+
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+}
+
+/* Card genérica */
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 1rem;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+/* Grid de tareas */
+.task-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+    width: 100%;
+}
+
+.task-card {
+    background: white;
     border-radius: 10px;
-    background-color: #bcb9e5;
+    padding: 1rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
-.container input {
-  border: 1px solid blue;
-  border-radius: 10%;
-  padding:1%;
-  margin-bottom:2%;
+
+/* Formularios */
+.form label {
+    display: block;
+    margin-top: 1rem;
+    font-weight: 500;
 }
-footer {
-  clear: both;
-  background-color: rgb(166, 196, 206);
-  color: white;
-  text-align: center;
-  padding: 20px;
-  margin-top: 50px;
-  font-family: sans-serif;
+
+input[type="text"],
+input[type="password"],
+input[type="date"],
+textarea {
+    width: 100%;
+    padding: 0.6rem;
+    margin-top: 0.3rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="date"]:focus {
+    border-color: #605280;
+}
+
+/* Botones */
+.btn {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.7rem 1.5rem;
+    background: #605280;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.3s ease;
+}
+.btn:hover {
+    background: #4e426a;
+}
+
+.btn.secondary {
+    background: #ddd;
+    color: #333;
+}
+.btn.secondary:hover {
+    background: #ccc;
+}
+
+.btn.danger {
+    background: #e74c3c;
+}
+.btn.danger:hover {
+    background: #c0392b;
+}
+
+/* Mensajes */
+.error {
+    color: #e74c3c;
+    margin-top: 1rem;
+}
+.success {
+    color: #27ae60;
+    margin-top: 1rem;
+}
+
+/* Centrado */
+.centered {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
 }
