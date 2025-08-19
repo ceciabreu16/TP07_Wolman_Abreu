@@ -7,6 +7,7 @@ namespace try_catch_poc.Models
         public DateTime FechaCreacion { get; set; }
         public bool EstaFinalizada { get; set; }
         public bool EstaEliminada { get; set; }
+        public bool EsPropia { get; set; }
     }
     public class TareasCompartidas
     {

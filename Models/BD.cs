@@ -19,7 +19,7 @@ namespace try_catch_poc.Models
             return nuevoUsuario;
         }
 
-        public static List<Tareas> ListarTareas(string username)
+        /*public static List<Tareas> ListarTareas(string username)
         {
             List<Tareas> listaTareas = new List<Tareas>();
             using (SqlConnection connection = new SqlConnection(_connectionString))
@@ -28,6 +28,39 @@ namespace try_catch_poc.Models
                 listaTareas = connection.Query<Tareas>(sql, new { username }).ToList();
             }
             return listaTareas;
+        }*/
+        public static List<Tareas> ListarTareas(string username)
+        {
+            var listaTareas = new List<Tareas>();
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                string sql = @"
+            SELECT T.Id, T.Titulo, T.FechaCreacion, T.EstaFinalizada, T.EstaEliminada, TC.UsuarioEsCreador
+            FROM Tareas T
+            INNER JOIN TareasCompartidas TC ON T.Id = TC.TareaId
+            INNER JOIN Usuarios U ON U.Id = TC.UsuarioId
+            WHERE U.Username = @username";
+                SqlCommand cmd = new SqlCommand(sql, connection);
+                cmd.Parameters.AddWithValue("@username", username);
+
+                connection.Open();
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        listaTareas.Add(new Tareas
+                        {
+                            Id = (int)reader["Id"],
+                            Titulo = reader["Titulo"].ToString(),
+                            FechaCreacion = (DateTime)reader["FechaCreacion"],
+                            EstaFinalizada = (bool)reader["EstaFinalizada"],
+                            EstaEliminada = (bool)reader["EstaEliminada"],
+                            EsPropia = (bool)reader["UsuarioEsCreador"]
+                        });
+                    }
+                }
+            }
+            return listaTareas.OrderBy(t => t.FechaCreacion).ToList();
         }
         public static void InsertarTarea(string titulo, string estado, string username, DateTime fechaCreacion)
         {
@@ -82,18 +115,6 @@ namespace try_catch_poc.Models
                 connection.Execute(sql, new { username, password });
             }
         }
-        public static bool UsuarioExiste(string username)
-        {
-            using (SqlConnection con = new SqlConnection(_connectionString))
-            {
-                string query = "SELECT COUNT(*) FROM Usuarios WHERE Username = @username";
-                SqlCommand cmd = new SqlCommand(query, con);
-                cmd.Parameters.AddWithValue("@username", username);
-                con.Open();
-                int count = (int)cmd.ExecuteScalar();
-                return count > 0;
-            }
-        }
 
         public static int ObtenerIdUsuario(string username)
         {
@@ -134,35 +155,32 @@ namespace try_catch_poc.Models
                 cmd.ExecuteNonQuery();
             }
         }
-
-        public static List<Tareas> TareasCompartidasConUsuario(int usuarioId)
+        public static void EliminarTarea(int id)
         {
-            var tareas = new List<Tareas>();
-            using (SqlConnection con = new SqlConnection(_connectionString))
+            // Borrado lógico: marca la tarea como eliminada
+            using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                string query = @"SELECT t.* FROM Tareas t
-                             INNER JOIN TareasCompartidas tc ON t.Id = tc.TareaId
-                             WHERE tc.UsuarioId = @usuarioId";
-                SqlCommand cmd = new SqlCommand(query, con);
-                cmd.Parameters.AddWithValue("@usuarioId", usuarioId);
-                con.Open();
-                using (SqlDataReader reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        // Asumiendo que tienes un constructor adecuado
-                        tareas.Add(new Tareas
-                        {
-                            Id = (int)reader["Id"],
-                            Titulo = reader["Titulo"].ToString(),
-                            Descripcion = reader["Descripcion"].ToString(),
-                            // ... otras propiedades
-                        });
-                    }
-                }
+                string sql = "UPDATE Tareas SET EstaEliminada = 1 WHERE Id = @id";
+                SqlCommand cmd = new SqlCommand(sql, connection);
+                cmd.Parameters.AddWithValue("@id", id);
+                connection.Open();
+                cmd.ExecuteNonQuery();
             }
-            return tareas;
         }
+
+        public static void FinalizarTarea(int id)
+        {
+            // Marca la tarea como finalizada
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                string sql = "UPDATE Tareas SET EstaFinalizada = 1 WHERE Id = @id";
+                SqlCommand cmd = new SqlCommand(sql, connection);
+                cmd.Parameters.AddWithValue("@id", id);
+                connection.Open();
+                cmd.ExecuteNonQuery();
+            }
+        }
+
     }
 }
 
