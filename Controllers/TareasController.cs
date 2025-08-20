@@ -11,12 +11,12 @@ public class TareasController : Controller
         if (string.IsNullOrEmpty(usuario))
             return RedirectToAction("Login", "Auth");
 
-        ViewBag.listaTareas = BD.ListarTareas(usuario);
+        ViewBag.listaTareas = BDTareas.ListarTareas(usuario);
         ViewBag.usuario = usuario;
         return View();
     }
 
-    public IActionResult Nueva()
+    public IActionResult NuevaTarea()
     {
         var usuario = HttpContext.Session.GetString("usuario");
         if (string.IsNullOrEmpty(usuario))
@@ -26,13 +26,13 @@ public class TareasController : Controller
     }
 
     [HttpPost]
-    public IActionResult Nueva(string Titulo, string estado, DateTime FechaCreacion)
+    public IActionResult NuevaTarea(string Titulo, string estado, DateTime FechaCreacion)
     {
         var usuario = HttpContext.Session.GetString("usuario");
         if (string.IsNullOrEmpty(usuario))
             return RedirectToAction("Login", "Auth");
 
-        BD.InsertarTarea(Titulo, estado, usuario, FechaCreacion);
+        BDTareas.InsertarTarea(Titulo, estado, usuario, FechaCreacion);
         return RedirectToAction("Lista");
     }
 
@@ -42,7 +42,7 @@ public class TareasController : Controller
         if (string.IsNullOrEmpty(usuario))
             return RedirectToAction("Login", "Auth");
 
-        var tarea = BD.BuscarTareaPorId(id);
+        var tarea = BDTareas.BuscarTareaPorId(id);
         if (tarea == null || !tarea.EsPropia)
             return RedirectToAction("Lista");
 
@@ -57,11 +57,11 @@ public class TareasController : Controller
         if (string.IsNullOrEmpty(usuario))
             return RedirectToAction("Login", "Auth");
 
-        var tarea = BD.BuscarTareaPorId(id);
+        var tarea = BDTareas.BuscarTareaPorId(id);
         if (tarea == null || !tarea.EsPropia)
             return RedirectToAction("Lista");
 
-        BD.EditarTarea(id, Titulo, estado, FechaCreacion);
+        BDTareas.EditarTarea(id, Titulo, estado, FechaCreacion);
         return RedirectToAction("Lista");
     }
 
@@ -71,11 +71,11 @@ public class TareasController : Controller
         if (string.IsNullOrEmpty(usuario))
             return RedirectToAction("Login", "Auth");
 
-        var tarea = BD.BuscarTareaPorId(id);
+        var tarea = BDTareas.BuscarTareaPorId(id);
         if (tarea == null || !tarea.EsPropia)
             return RedirectToAction("Lista");
 
-        BD.EliminarTarea(id); // Borrado lógico en la BD
+        BDTareas.EliminarTarea(id); // Borrado lógico en la BD
         return RedirectToAction("Lista");
     }
 
@@ -85,11 +85,11 @@ public class TareasController : Controller
         if (string.IsNullOrEmpty(usuario))
             return RedirectToAction("Login", "Auth");
 
-        var tarea = BD.BuscarTareaPorId(id);
+        var tarea = BDTareas.BuscarTareaPorId(id);
         if (tarea == null || !tarea.EsPropia)
             return RedirectToAction("Lista");
 
-        BD.FinalizarTarea(id); // Marcar como finalizada en la BD
+        BDTareas.FinalizarTarea(id); // Marcar como finalizada en la BD
         return RedirectToAction("Lista");
     }
 
@@ -99,7 +99,7 @@ public class TareasController : Controller
         if (string.IsNullOrEmpty(usuario))
             return RedirectToAction("Login", "Auth");
 
-        var tarea = BD.BuscarTareaPorId(id);
+        var tarea = BDTareas.BuscarTareaPorId(id);
         if (tarea == null || !tarea.EsPropia)
             return RedirectToAction("Lista");
 
@@ -114,16 +114,16 @@ public class TareasController : Controller
         if (string.IsNullOrEmpty(usuario))
             return RedirectToAction("Login", "Auth");
 
-        var tarea = BD.BuscarTareaPorId(id);
+        var tarea = BDTareas.BuscarTareaPorId(id);
         if (tarea == null || !tarea.EsPropia)
             return RedirectToAction("Lista");
 
-        if (BD.UsuarioExiste(usuarioCompartir))
+        if (BDAuth.UsuarioExiste(usuarioCompartir))
         {
-            int usuarioId = BD.ObtenerIdUsuario(usuarioCompartir);
-            if (!BD.TareaYaCompartidaConUsuario(id, usuarioId))
+            int usuarioId = BDAuth.ObtenerIdUsuario(usuarioCompartir);
+            if (!BDTareas.TareaYaCompartidaConUsuario(id, usuarioId))
             {
-                BD.AgregarTareaCompartida(id, usuarioId);
+                BDTareas.AgregarTareaCompartida(id, usuarioId);
                 ViewBag.Exito = $"La tarea fue compartida con {usuarioCompartir}.";
             }
             else

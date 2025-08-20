@@ -5,6 +5,11 @@ namespace TPNoNum_Wolman_Abreu.Controllers;
 
 public class AuthController : Controller
 {
+    public IActionResult Index()
+    {
+        return View();
+    }
+
     public IActionResult Login()
     {
         return View();
@@ -13,7 +18,7 @@ public class AuthController : Controller
     [HttpPost]
     public IActionResult Login(string username, string password)
     {
-        var usuario = BD.BuscarUsuario(username, password);
+        var usuario = BDAuth.BuscarUsuario(username, password);
         if (usuario != null)
         {
             HttpContext.Session.SetString("usuario", username);
@@ -37,12 +42,12 @@ public class AuthController : Controller
     [HttpPost]
     public IActionResult Register(string username, string password)
     {
-        if (BD.UsuarioExiste(username))
+        if (BDAuth.UsuarioExiste(username))
         {
             ViewBag.Error = "Ese usuario ya existe";
             return View();
         }
-        BD.RegistrarUsuario(username, password);
+        BDAuth.RegistrarUsuario(username, password);
         HttpContext.Session.SetString("usuario", username);
         return RedirectToAction("Lista", "Tareas");
     }

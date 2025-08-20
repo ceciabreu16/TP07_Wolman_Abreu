@@ -13,7 +13,7 @@ namespace try_catch_poc.Models
     {
         public int Id { get; set; }
         public int TareaId { get; set; }
-        public string UsuarioId { get; set; }
+        public int UsuarioId { get; set; }
         public bool UsuarioEsCreador { get; set; }
     }
 }
